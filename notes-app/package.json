@@ -1,0 +1,16 @@
+{
+  "name": "nodecourse",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kushagra",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.1",
+    "fs": "0.0.1-security",
+    "yargs": "^17.0.1"
+  }
+}
