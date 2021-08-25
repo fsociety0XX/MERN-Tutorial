@@ -8,7 +8,6 @@ const file = path.join(__dirname,'./public')
 app.use(express.static(file))
 
 app.get('/weather', async (req, res) => {
-    console.log(req.query,"00000")
     if(Object.keys(req.query).length) {
         const {lat, lng} = req.query
         request({

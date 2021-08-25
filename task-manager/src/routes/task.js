@@ -1,10 +1,10 @@
 const express = require('express')
 const route = new express.Router()
-const Tasks = require('../models/task')
+const Task = require('../models/task')
 const auth = require('../middleware/auth')
 
 const createTasks = async (req, res) => {
-    const task = new Tasks({
+    const task = new Task({
         ...req.body,
         owner: req.user._id
     })
@@ -19,11 +19,33 @@ const createTasks = async (req, res) => {
 route.post('/tasks', auth, createTasks)
 
 const fetchAllTasks = async (req, res) => {
+    const match = {}
+    const sort = {}
+    const skip = parseInt((req.query.page - 1) * req.query.limit)
+
+    if(req.query.completed) {
+        match.completed = req.query.completed
+    }
+
+    if(req.query.sortBy) {
+        const parts = req.query.sortBy.split(':')
+        sort[parts[0]] =  parts[1] === 'desc' ? -1 : 1
+    }
+
     try {
-        await req.user.populate('tasks').execPopulate()
-        res.send(tasks)
+        //const tasks = await Task.find({owner: req.user._id})
+        await req.user.populate({
+            path: 'tasks',
+            match,
+            options: {
+                limit: parseInt(req.query.limit),
+                skip,
+                sort
+            }
+        }).execPopulate()
+        res.send(req.user.tasks)
     }catch(err) {
-        res.status(500).send()
+        res.status(500).send('Invalid Request')
     }
 }
 
@@ -32,7 +54,7 @@ route.get('/tasks',auth, fetchAllTasks)
 const fetchSpecificTask = async (req, res) => {
     const _id = req.params.id
     try {
-        const task = await Tasks.findOne({_id, owner: req.user._id })
+        const task = await Task.findOne({_id, owner: req.user._id })
         if(!task) return res.status(404).send()
         res.send(task)
     } catch(err) {
@@ -51,7 +73,7 @@ const updateTasks = async (req, res) => {
     }
     const _id = req.params.id
     try {
-        const task = await Tasks.findOne({_id, owner: req.user._id})
+        const task = await Task.findOne({_id, owner: req.user._id})
         if(!task) {
             return res.status(404).send('No task found')
          }
@@ -68,7 +90,7 @@ route.patch('/tasks/:id', auth,  updateTasks)
 const deleteTask = async (req, res) => {
     const _id = req.params.id
     try {
-        const task = await Tasks.findOneAndDelete({_id, owner: req.user._id})
+        const task = await Task.findOneAndDelete({_id, owner: req.user._id})
         if(!task) {
             return res.status(404).send('No task found')
         }

@@ -1,9 +1,9 @@
 require('../src/db/mongoose')
-const Tasks = require('../src/models/task')
+const Task = require('../src/models/task')
 
 const removeAndGetSpecificTaskList = async () => {
-    await Tasks.findByIdAndDelete('61162a30d7b81716eb35406a')
-    const tasks = await Tasks.find({completed: false})
+    await Task.findByIdAndDelete('61162a30d7b81716eb35406a')
+    const tasks = await Task.find({completed: false})
     return tasks
 }
 
