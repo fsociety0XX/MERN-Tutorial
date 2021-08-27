@@ -7,7 +7,7 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
-  "author": "",
+  "author": "Kushagra Garg",
   "license": "ISC",
   "dependencies": {
     "@sendgrid/mail": "^7.4.6",
